@@ -17,18 +17,180 @@
       align-items: center;
       justify-content: center;
       font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: radial-gradient(ellipse at 20% 80%, #1a1a4e 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, #2d1b69 0%, transparent 50%),
+                  linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       color: #fff;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.9; }
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      z-index: 1;
+    }
+
+    .globe-scene {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      perspective: 600px;
+    }
+
+    .globe {
+      width: 100%;
+      height: 100%;
+      animation: globe-spin 12s linear infinite;
+      transform-style: preserve-3d;
+    }
+
+    @keyframes globe-spin {
+      from { transform: rotateY(0deg) rotateX(12deg); }
+      to   { transform: rotateY(360deg) rotateX(12deg); }
+    }
+
+    .globe svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 30px rgba(100, 180, 255, 0.5));
+    }
+
+    .hand {
+      position: absolute;
+      bottom: -10px;
+      right: -30px;
+      font-size: 3.5rem;
+      transform-origin: 70% 80%;
+      animation: wave 1.2s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      15%      { transform: rotate(18deg); }
+      30%      { transform: rotate(-8deg); }
+      45%      { transform: rotate(18deg); }
+      60%      { transform: rotate(-4deg); }
+      75%      { transform: rotate(12deg); }
     }
 
     h1 {
-      font-size: 3rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-align: center;
+      background: linear-gradient(90deg, #fff 0%, #a8d8ff 50%, #fff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <div class="globe-scene">
+      <div class="globe">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="ocean" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#4fc3f7"/>
+              <stop offset="60%" stop-color="#1565c0"/>
+              <stop offset="100%" stop-color="#0d47a1"/>
+            </radialGradient>
+            <clipPath id="sphere">
+              <circle cx="100" cy="100" r="90"/>
+            </clipPath>
+          </defs>
+
+          <!-- Sphere base -->
+          <circle cx="100" cy="100" r="90" fill="url(#ocean)"/>
+
+          <!-- Continents -->
+          <g clip-path="url(#sphere)" fill="#43a047" opacity="0.9">
+            <ellipse cx="70" cy="80" rx="28" ry="22" transform="rotate(-15 70 80)"/>
+            <ellipse cx="130" cy="70" rx="22" ry="18"/>
+            <ellipse cx="115" cy="120" rx="30" ry="20" transform="rotate(10 115 120)"/>
+            <ellipse cx="60" cy="130" rx="18" ry="14"/>
+            <ellipse cx="155" cy="105" rx="12" ry="16"/>
+          </g>
+
+          <!-- Latitude lines -->
+          <g clip-path="url(#sphere)" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+            <ellipse cx="100" cy="100" rx="90" ry="30"/>
+            <ellipse cx="100" cy="100" rx="90" ry="55"/>
+            <ellipse cx="100" cy="100" rx="90" ry="75"/>
+            <line x1="10" y1="100" x2="190" y2="100"/>
+          </g>
+
+          <!-- Longitude lines -->
+          <g clip-path="url(#sphere)" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1">
+            <ellipse cx="100" cy="100" rx="30" ry="90"/>
+            <ellipse cx="100" cy="100" rx="55" ry="90"/>
+            <ellipse cx="100" cy="100" rx="75" ry="90"/>
+            <ellipse cx="100" cy="100" rx="90" ry="90"/>
+          </g>
+
+          <!-- Atmosphere glow -->
+          <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(120,200,255,0.3)" stroke-width="3"/>
+          <circle cx="100" cy="100" r="94" fill="none" stroke="rgba(120,200,255,0.1)" stroke-width="6"/>
+        </svg>
+      </div>
+      <div class="hand" aria-hidden="true">👋</div>
+    </div>
+
+    <h1>Hello, World!</h1>
+    <p class="subtitle">Welcome to the planet</p>
+  </div>
+
+  <script>
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+      starsEl.appendChild(star);
+    }
+  </script>
 </body>
 </html>
